@@ -1,8 +1,19 @@
 <script lang="ts">
 import {generations } from "./generations"
 import type { PageData } from "./$types";
+  import type { IndexMonster } from "./+page";
 export let data: PageData;
+let monsterId : string;
+$: monster = data.monsters.find(monster => monster.id === monsterId);
+const monsterClick = (monster:IndexMonster)=>{
+    monsterId = monster.id;
+}
+
 </script>
+
+
+<h1>{monsterId}</h1>
+<h2>{monster?.name}</h2>
 <div class="generations">
     {#each generations as generation}
     <div class="generation">{generation.main_region}</div>
@@ -12,7 +23,7 @@ export let data: PageData;
 <div class="monsters">
     {#each data.monsters as monster (monster.id)}
 
-    <div class="monster" on:click={()=> alert("hello "+monster.name)}>
+    <div class="monster" on:click={()=> monsterClick(monster)}>
         <div class="monster-content">
             <img src={monster.image} alt={monster.name}>
             {monster.name}
