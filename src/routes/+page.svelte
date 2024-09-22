@@ -1,89 +1,78 @@
 <script lang="ts">
 import {generations } from "./generations"
 import type { PageData } from "./$types";
-  import type { IndexMonster } from "./+page";
+import { page } from "$app/stores";
+import { goto } from "$app/navigation";
+import Monster from "./Monster.svelte";
 export let data: PageData;
-let monsterId : string;
+
+//Searching for monster name using monster id from the page data
+$: monsterId =  $page.url.searchParams.get('monsterId') || "";
 $: monster = data.monsters.find(monster => monster.id === monsterId);
-const monsterClick = (monster:IndexMonster)=>{
-    monsterId = monster.id;
+$: monsterId2 =  $page.url.searchParams.get('monsterId2') || "";
+$: monster2 = data.monsters.find(monster => monster.id === monsterId2);
+
+//Filtering the monsters based on the search string
+let form = {
+    searchString: ''
 }
+let searchString = '';
+$: SelectedMonsters = data.monsters.filter((monster)=>{
+ return monster.name.toLowerCase().includes(searchString.toLowerCase());
+})
+const SearchSubmit = (e: Event) => {
+    searchString = form.searchString;
+}
+
+
+//Updating the search params
+const updateSearchParams = (key:string,value:string)=>{
+    const searchParams = new URLSearchParams($page.url.search);
+    searchParams.set(key,value);
+    goto(`?${searchParams.toString()}`);
+ };
 
 </script>
 
+<!-- html part -->
 
-<h1>{monsterId}</h1>
-<h2>{monster?.name}</h2>
-<div class="generations">
-    {#each generations as generation}
-    <div class="generation">{generation.main_region}</div>
-    {/each}
-</div>
-
-<div class="monsters">
-    {#each data.monsters as monster (monster.id)}
-
-    <div class="monster" on:click={()=> monsterClick(monster)}>
-        <div class="monster-content">
-            <img src={monster.image} alt={monster.name}>
-            {monster.name}
-        </div>
-        <div class="monster-id">
-            {monster.id}
-        </div>
+<!-- selected monster cards -->
+<div class="flex flex-row">
+    <div>
+        {#if monster}
+        <div>Monster 1</div>
+        <Monster monster = {monster} 
+        updateSearchParams={updateSearchParams}/>
+        {/if}
     </div>
-    {/each}
+    <div>
+        {#if monster2}
+        <div>Monster 2</div>
+        <Monster monster = {monster2} 
+        updateSearchParams={updateSearchParams}/>
+        {/if}
+    </div>
 </div>
 
 
-<style>
-    .generations {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .generation {
-        padding: 10px;
-        margin: 5px;
-        background-color: #ddd;
-    }
-    .generation:hover {
-        background-color: #ccc;
-        cursor: pointer;
-    }
-    .monsters {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .monster {
-        width: 110px;
-        padding: 15px;
-        margin: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        background-color: #eee;
-    }
-    .monster:hover {
-        background-color: #ddd;
-        cursor: pointer;
-    }
-    .monster-content {
-        text-align: center;
-    }
-    img {
-        width: 80%;
-    }
-    .monster-id{
-        position:absolute;
-        top: 10px;
-        left: 10px;
-        font-size: 0.8em;
-        color: #aaa;
-    }
+    <!-- generations tab -->
+<div class="flex flex-row flex-wrap justify-center">
+    {#each generations as generation}
+    <div class="p-2 m-2 bg-gray-200 hover:bg-gray-300 hover:cursor-pointer rounded-lg">{generation.main_region}</div>
+    {/each}
+</div>
 
-</style>
+<!-- search bar -->
+<form class="flex flex-row justify-center gap-2" on:submit={SearchSubmit}>
+    <input class=" w-48 border-[1px] border-gray-300 rounded-md p-2" type="text" bind:value={form.searchString} placeholder="Pokemon Name">
+    <input class="border-[1px] border-gray-300 rounded-md p-2 cursor-pointer bg-blue-700 text-white"  type="submit">
+</form>
+
+<!-- All monster cards -->
+<div class="flex flex-row flex-wrap justify-center">
+    {#each SelectedMonsters as monster (monster.id)}
+<Monster monster = {monster} 
+updateSearchParams={updateSearchParams}
+isInteractive = {true}/>
+    {/each}
+</div>
