@@ -12,6 +12,7 @@ $: monster = data.monsters.find(monster => monster.id === monsterId);
 $: monsterId2 =  $page.url.searchParams.get('monsterId2') || "";
 $: monster2 = data.monsters.find(monster => monster.id === monsterId2);
 
+$: SelectedGenerationId = $page.url.searchParams.get('generation_id') || "";
 //Filtering the monsters based on the search string
 let form = {
     searchString: ''
@@ -56,14 +57,25 @@ const updateSearchParams = (key:string,value:string)=>{
 
 
     <!-- generations tab -->
-<div class="flex flex-row flex-wrap justify-center">
-    {#each generations as generation}
-    <div class="p-2 m-2 bg-gray-200 hover:bg-gray-300 hover:cursor-pointer rounded-lg">{generation.main_region}</div>
-    {/each}
-</div>
+    <div class="flex flex-row flex-wrap justify-center">
+        <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 active:bg-gray-700 active:text-white hover:cursor-pointer rounded-lg"
+                class:active={SelectedGenerationId === "all"}
+                on:click={() => updateSearchParams("generation_id", "all")}>
+          All
+        </button>
+        {#each generations as generation}   
+      
+        <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 active:bg-gray-700 active:text-white hover:cursor-pointer rounded-lg"
+                class:active={SelectedGenerationId === generation.id.toString()}
+                on:click={() => updateSearchParams("generation_id", generation.id.toString())}>
+          {generation.main_region}
+        </button>
+        {/each}   
+      
+      </div>
 
 <!-- search bar -->
-<form class="flex flex-row justify-center gap-2" on:submit={SearchSubmit}>
+<form class="flex flex-row justify-center gap-2" on:submit|preventDefault={SearchSubmit}>
     <input class=" w-48 border-[1px] border-gray-300 rounded-md p-2" type="text" bind:value={form.searchString} placeholder="Pokemon Name">
     <input class="border-[1px] border-gray-300 rounded-md p-2 cursor-pointer bg-blue-700 text-white"  type="submit">
 </form>
@@ -76,3 +88,10 @@ updateSearchParams={updateSearchParams}
 isInteractive = {true}/>
     {/each}
 </div>
+
+<style>
+    .active{
+        background-color: rgb(54, 54, 54);
+        color: white;
+    }
+</style>
