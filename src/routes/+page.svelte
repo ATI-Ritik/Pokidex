@@ -39,14 +39,14 @@ const updateSearchParams = (key:string,value:string)=>{
 
 <!-- selected monster cards -->
 <div class="flex flex-row">
-    <div>
+    <div class="flex flex-col items-center">
         {#if monster}
         <div>Monster 1</div>
         <Monster monster = {monster} 
         updateSearchParams={updateSearchParams}/>
         {/if}
     </div>
-    <div>
+    <div class="flex flex-col items-center">
         {#if monster2}
         <div>Monster 2</div>
         <Monster monster = {monster2} 
