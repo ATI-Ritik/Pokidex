@@ -34,15 +34,13 @@ const updateSearchParams = (key:string,value:string)=>{
 <!-- html part -->
     <!-- generations tab -->
     <div class="flex flex-row flex-wrap justify-center">
-        <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 active:bg-gray-700 active:text-white hover:cursor-pointer rounded-lg"
-                class:active={SelectedGenerationId === "all"}
+        <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 {SelectedGenerationId === "all"?'bg-gray-700 text-white':''} hover:cursor-pointer rounded-lg"
                 on:click={() => updateSearchParams("generation_id", "all")}>
           All
         </button>
         {#each generations as generation}   
       
-        <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 active:bg-gray-700 active:text-white hover:cursor-pointer rounded-lg"
-                class:active={SelectedGenerationId === generation.id.toString()}
+        <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 {SelectedGenerationId === generation.id.toString()?'bg-gray-700 text-white':''} hover:cursor-pointer rounded-lg"
                 on:click={() => updateSearchParams("generation_id", generation.id.toString())}>
           {generation.main_region}
         </button>
@@ -62,10 +60,3 @@ const updateSearchParams = (key:string,value:string)=>{
 <Monster monster = {monster} />
     {/each}
 </div>
-
-<style>
-    .active{
-        background-color: rgb(54, 54, 54);
-        color: white;
-    }
-</style>
