@@ -6,13 +6,9 @@ import { goto } from "$app/navigation";
 import Monster from "./Monster.svelte";
 export let data: PageData;
 
-//Searching for monster name using monster id from the page data
-$: monsterId =  $page.url.searchParams.get('monsterId') || "";
-$: monster = data.monsters.find(monster => monster.id === monsterId);
-$: monsterId2 =  $page.url.searchParams.get('monsterId2') || "";
-$: monster2 = data.monsters.find(monster => monster.id === monsterId2);
-
+//Getting the generation id from the url
 $: SelectedGenerationId = $page.url.searchParams.get('generation_id') || "";
+
 //Filtering the monsters based on the search string
 let form = {
     searchString: ''
@@ -36,26 +32,6 @@ const updateSearchParams = (key:string,value:string)=>{
 </script>
 
 <!-- html part -->
-
-<!-- selected monster cards -->
-<div class="flex flex-row">
-    <div class="flex flex-col items-center">
-        {#if monster}
-        <div>Monster 1</div>
-        <Monster monster = {monster} 
-        updateSearchParams={updateSearchParams}/>
-        {/if}
-    </div>
-    <div class="flex flex-col items-center">
-        {#if monster2}
-        <div>Monster 2</div>
-        <Monster monster = {monster2} 
-        updateSearchParams={updateSearchParams}/>
-        {/if}
-    </div>
-</div>
-
-
     <!-- generations tab -->
     <div class="flex flex-row flex-wrap justify-center">
         <button class="p-2 m-2 bg-gray-200 transition-all hover:bg-gray-300 active:bg-gray-700 active:text-white hover:cursor-pointer rounded-lg"
@@ -83,9 +59,7 @@ const updateSearchParams = (key:string,value:string)=>{
 <!-- All monster cards -->
 <div class="flex flex-row flex-wrap justify-center">
     {#each SelectedMonsters as monster (monster.id)}
-<Monster monster = {monster} 
-updateSearchParams={updateSearchParams}
-isInteractive = {true}/>
+<Monster monster = {monster} />
     {/each}
 </div>
 
